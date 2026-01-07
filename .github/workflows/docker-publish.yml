@@ -2,13 +2,13 @@ name: Docker Build and Push
 
 on:
   push:
-    branches: ["master"]
-    tags: [ 'v*.*.*' ]
+    branches: ["dev"]
   pull_request:
-    branches: ["master"]
+    branches: ["dev"]
     
 jobs:
   build:
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     environment: dekauto
 
@@ -29,12 +29,8 @@ jobs:
           images: |
             ${{ secrets.DOCKERHUB_USERNAME }}/dekauto_frontend_nginx
           tags: |
-            type=raw,value=latest
+            type=raw,value=latest-dev
             
-            type=raw,value=release,enable=${{ startsWith(github.ref, 'refs/tags/') }}
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
