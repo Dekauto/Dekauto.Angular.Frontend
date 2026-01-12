@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { backend_api_url, diploma_supplement_export_url, group_export_url, student_export_url } from '../../app.config';
 
 export interface DiplomaSupplementExportRequest {
-  diplomaSupplementData: any;
+  data: any;
   manufacturer: string;
   educationLevel: string;
 }

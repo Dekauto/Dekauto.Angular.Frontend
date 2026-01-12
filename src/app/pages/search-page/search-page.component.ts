@@ -281,7 +281,7 @@ export class SearchPageComponent implements OnInit {
 
         // ЭТАП 2: Подготовка объекта запроса на экспорт
         const exportRequest: DiplomaSupplementExportRequest = {
-          diplomaSupplementData: diplomaSupplementData,
+          data: diplomaSupplementData,
           manufacturer: this.selectedManufacturer!,
           educationLevel: this.selectedEducationLvl!
         };
