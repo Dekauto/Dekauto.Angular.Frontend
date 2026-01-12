@@ -78,8 +78,7 @@ export class SearchPageComponent implements OnInit {
   educationLvl: any = [
     { name: 'Бакалавриат', value: 'bachelor' },
     { name: 'Магистратура', value: 'master' },
-    { name: 'Специалитет', value: 'specialist' },
-    { name: 'Аспирантура', value: 'postgraduate' }
+    { name: 'Специалитет', value: 'specialist' }
   ];
   selectedEducationLvl: string | undefined;
 
