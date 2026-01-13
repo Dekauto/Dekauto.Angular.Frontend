@@ -23,15 +23,15 @@ import { HeaderComponent } from '../header/header.component';
 import { HttpResponse } from '@angular/common/http';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { diploma_supplement_export_default_name } from '../../app.config';
+import { StyleClass } from "primeng/styleclass";
 
-type UploadFileType = 'ld' | 'contract' | 'journal' | 'statement' | 'plan' | 'studentCard';
+type UploadFileType = 'ld' | 'contract' | 'journal' | 'statement' | 'plan' | 'plan2' | 'studentCard';
 
 @Component({
   selector: 'app-search-page',
   imports: [FormsModule, SelectModule, ButtonModule,
     RouterOutlet, RouterModule, FileUploadModule, ToastModule,
-    CommonModule, HeaderComponent, ConfirmPopupModule
-  ],
+    CommonModule, HeaderComponent, ConfirmPopupModule, StyleClass],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.css',
   providers: [MessageService, ConfirmationService]

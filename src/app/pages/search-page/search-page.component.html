@@ -141,7 +141,7 @@
         <div class="gap-3 w-full">
         <label for="uploadCard" class="text-xl">Для приложения к диплому</label>
           <p-fileupload
-            class="upload-card rounded-b-none!"
+            styleClass="rounded-b-none!"
             mode="advanced"
             name="uploadCard"
             chooseLabel="Карточка студента"
@@ -156,6 +156,25 @@
           >
             <ng-template #empty>
               <span class="drag-hint">Перетащите файл карточки студента сюда.</span>
+            </ng-template>
+          </p-fileupload>
+          
+            <p-fileupload
+            styleClass="rounded-none!"
+            mode="advanced"
+            name="uploadPlan2"
+            chooseLabel="Учебный план"
+            chooseIcon="pi pi-upload"
+            [accept]="excelFileFormat"
+            [cancelLabel]="cancelLabel"
+            maxFileSize="20971520"
+            (onSelect)="onFileSelect($event, 'plan2')"
+            (onRemove)="onClearFile('plan2')"
+            (onClear)="onClearFile('plan2')"
+            showUploadButton="false"
+          >
+            <ng-template #empty>
+              <span class="drag-hint">Перетащите файл учебного плана сюда.</span>
             </ng-template>
           </p-fileupload>
 
