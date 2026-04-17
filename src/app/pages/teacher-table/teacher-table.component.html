@@ -1,0 +1,56 @@
+<section class="legend">
+  <span><i class="dot green"></i> активность на занятии</span>
+  <span><i class="dot gray"></i> посещение занятия</span>
+  <span><i class="dot yellow"></i> отсутствие по неуважительной причине</span>
+</section>
+
+<table class="grade-table">
+  <thead>
+    <tr>
+      <th>ФИО</th>
+      <th>Рейтинговая</th>
+      <th>Рубеж</th>
+      <th>Рубеж</th>
+      <th>Проп. лекции</th>
+      <th>Проп. семинары</th>
+      <th>Сумма баллов</th>
+      @for (lesson of data.lessons; track lesson.id) {
+      <th>{{ lesson.title }}</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (row of data.rows; track trackRow($index, row)) {
+    <tr>
+      <td>{{ row.fullName }}</td>
+      <td>{{ row.rating }}</td>
+      <td>{{ row.exam1 }}</td>
+      <td>{{ row.exam2 }}</td>
+      <td>{{ row.lecturesMissed }}</td>
+      <td>{{ row.seminarsMissed }}</td>
+      <td [class.good]="row.totalScore > 0">{{ row.totalScore }}</td>
+      @for (lesson of data.lessons; track lesson.id) {
+      <td>
+        <div class="cell-actions">
+          <button type="button" class="attendance-btn" (click)="toggleAttendance(row.id, lesson.id)">
+            <span [class.marked]="row.attendanceByLesson[lesson.id]"></span>
+          </button>
+          <div class="activity-actions">
+            @for (point of [1, 2, 3, 4]; track point) {
+            <button type="button" class="score-btn" (click)="setActivity(row.id, lesson.id, point)">
+              {{ point }}
+            </button>
+            }
+          </div>
+        </div>
+      </td>
+      }
+    </tr>
+    }
+  </tbody>
+</table>
+
+<div class="topic-editor">
+  <label for="topicNote">Приписка по теме</label>
+  <input id="topicNote" [(ngModel)]="topicNote" />
+</div>

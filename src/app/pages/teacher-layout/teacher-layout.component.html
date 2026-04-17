@@ -1,0 +1,9 @@
+<header class="teacher-header">
+  <div class="brand">Dekauto</div>
+  <button type="button" class="logout-button" (click)="logout()">
+    Выход ({{ authService.currentUser?.login || 'teacher' }})
+  </button>
+</header>
+<main class="teacher-content">
+  <router-outlet></router-outlet>
+</main>

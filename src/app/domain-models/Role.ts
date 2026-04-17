@@ -5,6 +5,7 @@ export interface Role {
 
 export enum RoleKeys {
     ADMIN = 'Администратор',
+    TEACHER = 'Преподаватель',
     STUDENT = 'Студент',
     GUEST = 'Гость'
 }

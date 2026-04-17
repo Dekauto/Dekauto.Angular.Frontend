@@ -1,0 +1,34 @@
+<div class="page">
+  <aside class="side-menu">
+    <a routerLink="/teacher/reports/students">Отчет по студентам</a>
+    <a class="active" routerLink="/teacher/reports/group">Отчет по группе</a>
+    <a routerLink="/teacher/reports/all-years">Отчет по дисциплине</a>
+  </aside>
+
+  <section class="content">
+    <h2>Тепловая карта успеваемости</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Студент</th>
+          <th>Итог</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (metric of metrics; track metric.fullName) {
+        <tr>
+          <td>{{ metric.fullName }}</td>
+          <td>{{ metric.totalScore }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="kpi-grid">
+      <div>Средний балл группы: <strong>11,5</strong></div>
+      <div>Качество знаний: <strong>65%</strong></div>
+      <div>Средняя посещаемость группы: <strong>15,7 пар</strong></div>
+      <div>Корреляция: <strong>0,72</strong></div>
+    </div>
+  </section>
+</div>

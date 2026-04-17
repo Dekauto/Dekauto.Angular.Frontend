@@ -20,10 +20,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('Dekauto.Angular.Frontend');
   });
 
-  it('should render title', () => {
+  it('should render router outlet host', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Dekauto.Angular.Frontend');
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });

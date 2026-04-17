@@ -1,0 +1,54 @@
+.page {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 220px 1fr;
+}
+
+.side-menu {
+  border: 1px solid #9f9f9f;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  overflow: hidden;
+}
+
+.side-menu a {
+  border-bottom: 1px solid #bcbcbc;
+  color: #111;
+  padding: 0.7rem;
+  text-decoration: none;
+}
+
+.side-menu a.active {
+  background: #4caf50;
+  color: #fff;
+}
+
+h2 {
+  margin-bottom: 1rem;
+}
+
+table {
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid #c8c8c8;
+  padding: 0.5rem;
+}
+
+.kpi-grid {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(2, minmax(230px, 1fr));
+}
+
+.kpi-grid > div {
+  background: #eef8ef;
+  border: 1px solid #77b781;
+  padding: 0.8rem;
+}

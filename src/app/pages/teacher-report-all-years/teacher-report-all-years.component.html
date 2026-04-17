@@ -1,0 +1,16 @@
+<div class="page">
+  <aside class="side-menu">
+    <a routerLink="/teacher/reports/students">Отчет по студентам</a>
+    <a routerLink="/teacher/reports/group">Отчет по группе</a>
+    <a class="active" routerLink="/teacher/reports/all-years">Отчет по дисциплине</a>
+  </aside>
+
+  <section class="content">
+    <div class="kpi-row">
+      <div>Средний балл предмета <strong>{{ averageScore }}</strong></div>
+      <div>Среднее качество знаний <strong>{{ qualityPercent }}%</strong></div>
+      <div>Средняя посещаемость <strong>{{ averageAttendance }}%</strong></div>
+    </div>
+    <div class="chart-placeholder">Динамика качества преподавания дисциплины</div>
+  </section>
+</div>

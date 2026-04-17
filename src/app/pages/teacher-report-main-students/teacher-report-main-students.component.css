@@ -1,0 +1,92 @@
+.page {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 220px 1fr;
+}
+
+.side-menu {
+  border: 1px solid #9f9f9f;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  overflow: hidden;
+}
+
+.side-menu a {
+  border-bottom: 1px solid #bcbcbc;
+  color: #111;
+  padding: 0.7rem;
+  text-decoration: none;
+}
+
+.side-menu a.active {
+  background: #4caf50;
+  color: #fff;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.student-card {
+  border: 1px solid #77b781;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.student-title {
+  align-items: center;
+  background: #dfdfdf;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  font-size: 1.8rem;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  width: 100%;
+}
+
+.open-content {
+  border-top: 1px solid #77b781;
+  padding: 1rem;
+}
+
+.chart-row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  margin-bottom: 1rem;
+}
+
+.chart-box {
+  align-items: center;
+  background: #eaf8ec;
+  border: 1px solid #77b781;
+  display: flex;
+  font-size: 2rem;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+}
+
+.metrics-grid > div {
+  border: 1px solid #c8c8c8;
+  min-height: 120px;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.metric-label {
+  font-size: 1.5rem;
+}
+
+.metric-value {
+  font-size: 3rem;
+}

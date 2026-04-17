@@ -1,0 +1,108 @@
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.dot {
+  border: 1px solid #333;
+  border-radius: 50%;
+  display: inline-block;
+  height: 16px;
+  margin-right: 0.3rem;
+  width: 16px;
+}
+
+.dot.green {
+  background: #4caf50;
+}
+
+.dot.gray {
+  background: #aaa;
+}
+
+.dot.yellow {
+  background: #d8f000;
+}
+
+.grade-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.grade-table th,
+.grade-table td {
+  border: 1px solid #cfcfcf;
+  padding: 0.35rem;
+  text-align: center;
+  vertical-align: top;
+}
+
+.grade-table td:first-child,
+.grade-table th:first-child {
+  text-align: left;
+}
+
+.good {
+  background: #61b86f;
+}
+
+.cell-actions {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.attendance-btn {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.attendance-btn span {
+  background: #a1a1a1;
+  border: 1px solid #4a4a4a;
+  border-radius: 50%;
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+.attendance-btn span.marked {
+  background: #4caf50;
+}
+
+.activity-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.score-btn {
+  background: #5cbf61;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  height: 22px;
+  width: 22px;
+}
+
+.topic-editor {
+  margin-top: 1rem;
+  max-width: 500px;
+}
+
+.topic-editor label {
+  display: block;
+  margin-bottom: 0.4rem;
+  text-align: left;
+}
+
+.topic-editor input {
+  border: 1px solid #5cbf61;
+  border-radius: 8px;
+  font-size: 1.3rem;
+  padding: 0.5rem;
+  width: 100%;
+}
