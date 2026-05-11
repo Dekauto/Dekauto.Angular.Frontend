@@ -252,6 +252,12 @@ export class SearchPageComponent implements OnInit {
       return;
     }
 
+    if (!this.files.plan2) {
+      this.showError(null, "Импорт: Не прикреплен учебный план.", "Пожалуйста, загрузите Excel-файл с учебным планом.");
+      this.importLoading = false;
+      return;
+    }
+
     if (!this.selectedManufacturer) {
       this.showError(null, "Валидация: Не выбран шаблон.", "Пожалуйста, выберите производителя шаблона.");
       this.importLoading = false;
@@ -264,9 +270,13 @@ export class SearchPageComponent implements OnInit {
       return;
     }
 
+    const manufacturer = this.selectedManufacturer;
+    const educationLevel = this.selectedEducationLvl;
+
     // ЭТАП 1: Подготовка файла и импорт
     const importFormData = new FormData();
     importFormData.append('studentCard', this.files.studentCard);
+    importFormData.append('plan', this.files.plan2);
 
     // Вызываем метод сервиса для импорта файла
     this.apiImportService.importFileAsync(importFormData).subscribe({
@@ -281,9 +291,11 @@ export class SearchPageComponent implements OnInit {
         // ЭТАП 2: Подготовка объекта запроса на экспорт
         const exportRequest: DiplomaSupplementExportRequest = {
           data: diplomaSupplementData,
-          manufacturer: this.selectedManufacturer!,
-          educationLevel: this.selectedEducationLvl!
+          manufacturer: manufacturer,
+          educationLevel: educationLevel
         };
+
+        console.log('Экспорт приложения диплома: payload manufacturer/educationLevel', manufacturer, educationLevel);
 
         // Вызываем метод сервиса для экспорта документа
         this.apiExportService.exportDiplomaSupplementAsync(exportRequest).subscribe({
