@@ -90,3 +90,20 @@ p-progressbar {
   @apply text-sm;
   color: var(--p-select-placeholder-color);
 }
+
+/* Toast: длинный текст ошибки (импорт и др.) — ширина и прокрутка деталей */
+.p-toast-message.dekauto-toast-import-error {
+  max-width: min(96vw, 52rem);
+}
+
+.p-toast-message.dekauto-toast-import-error .p-toast-message-content {
+  max-width: 100%;
+}
+
+.p-toast-message.dekauto-toast-import-error .p-toast-detail {
+  max-height: min(65vh, 28rem);
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+}

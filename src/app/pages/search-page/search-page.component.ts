@@ -409,12 +409,32 @@ export class SearchPageComponent implements OnInit {
     }
 
     if (!detail) {
-      if (typeof error.error == 'string') {
-        detail = error.error;
+      const errBody = error?.error;
+      if (typeof errBody === 'string') {
+        detail = errBody;
+      } else if (errBody && typeof errBody === 'object' && errBody['errorType'] === 'StudentImportMismatch') {
+        const apiMessage = errBody['message'];
+        if (typeof apiMessage === 'string' && apiMessage.trim().length > 0) {
+          detail = apiMessage;
+        } else {
+          const fileName = errBody['sourceFileName'] ?? '';
+          const role = errBody['sourceFileRole'] ?? '';
+          const missing: string[] = Array.isArray(errBody['missingStudents']) ? errBody['missingStudents'] : [];
+          const list = missing.length ? missing.join(', ') : '(список пуст)';
+          detail = `Файл: ${fileName}. Роль в наборе: ${role}. Отсутствуют в файле (нужны для согласованного импорта): ${list}.`;
+        }
       } else {
         detail = "Возникла непредвиденная ошибка. Повторите попытку или свяжитесь с администратором";
       }
     }
-    this.messageService.add({ severity: 'error', summary: summary, detail: detail, life: 7000 });
+    const longDetail = typeof detail === 'string' && detail.length > 220;
+    const toastLife = longDetail ? 45000 : 7000;
+    this.messageService.add({
+      severity: 'error',
+      summary: summary,
+      detail: detail,
+      life: toastLife,
+      ...(longDetail ? { styleClass: 'dekauto-toast-import-error' } : {}),
+    });
   }
 }
