@@ -1,56 +1,88 @@
 <section class="legend">
-  <span><i class="dot green"></i> активность на занятии</span>
-  <span><i class="dot gray"></i> посещение занятия</span>
-  <span><i class="dot yellow"></i> отсутствие по неуважительной причине</span>
+  <span><i class="dot gray"></i> присутствие (серый кружок)</span>
+  <span><i class="dot heat"></i> оценка успеваемости 1–5 (насыщеннее зелёный — выше в колонке)</span>
+  <span><i class="dot yellow"></i> уважительная причина отсутствия</span>
+  <span><i class="dot white"></i> не отмечено</span>
 </section>
 
-<table class="grade-table">
-  <thead>
-    <tr>
-      <th>ФИО</th>
-      <th>Рейтинговая</th>
-      <th>Рубеж</th>
-      <th>Рубеж</th>
-      <th>Проп. лекции</th>
-      <th>Проп. семинары</th>
-      <th>Сумма баллов</th>
-      @for (lesson of data.lessons; track lesson.id) {
-      <th>{{ lesson.title }}</th>
-      }
-    </tr>
-  </thead>
-  <tbody>
-    @for (row of data.rows; track trackRow($index, row)) {
-    <tr>
-      <td>{{ row.fullName }}</td>
-      <td>{{ row.rating }}</td>
-      <td>{{ row.exam1 }}</td>
-      <td>{{ row.exam2 }}</td>
-      <td>{{ row.lecturesMissed }}</td>
-      <td>{{ row.seminarsMissed }}</td>
-      <td [class.good]="row.totalScore > 0">{{ row.totalScore }}</td>
-      @for (lesson of data.lessons; track lesson.id) {
-      <td>
-        <div class="cell-actions">
-          <button type="button" class="attendance-btn" (click)="toggleAttendance(row.id, lesson.id)">
-            <span [class.marked]="row.attendanceByLesson[lesson.id]"></span>
-          </button>
-          <div class="activity-actions">
-            @for (point of [1, 2, 3, 4]; track point) {
-            <button type="button" class="score-btn" (click)="setActivity(row.id, lesson.id, point)">
-              {{ point }}
-            </button>
+<div class="grade-table-scroll">
+  <table class="grade-table">
+    <thead>
+      <tr>
+        <th class="col-fio">ФИО</th>
+        @for (lesson of data.lessons; track lesson.id) {
+        <th class="col-lesson">
+          <div class="lesson-type">{{ lesson.pairType }}</div>
+          <div class="lesson-date">{{ lesson.dateDayMonth }}</div>
+          <div
+            class="lesson-topic"
+            role="button"
+            tabindex="0"
+            (click)="startTopicEdit(lesson.id, $event)"
+            (keydown.enter)="startTopicEdit(lesson.id, $event)"
+          >
+            @if (editingTopicLessonId === lesson.id) {
+            <input
+              class="topic-input"
+              [(ngModel)]="topicByLessonId[lesson.id]"
+              (blur)="stopTopicEdit()"
+              (click)="$event.stopPropagation()"
+            />
+            } @else {
+            <span class="topic-label">{{ topicByLessonId[lesson.id] || 'Тема' }}</span>
             }
           </div>
-        </div>
-      </td>
+        </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of data.rows; track trackRow($index, row)) {
+      <tr>
+        <td class="col-fio">{{ row.fullName }}</td>
+        @for (lesson of data.lessons; track lesson.id) {
+        <td
+          class="grade-cell"
+          [class.cell-empty]="cell(row.id, lesson.id).mode === 'empty'"
+          [class.cell-present]="cell(row.id, lesson.id).mode === 'present'"
+          [class.cell-excused]="cell(row.id, lesson.id).mode === 'excused'"
+          [class.cell-scored]="cell(row.id, lesson.id).mode === 'scored'"
+          [ngStyle]="cell(row.id, lesson.id).mode === 'scored' ? scoredCellStyle(row.id, lesson.id) : {}"
+          (click)="onCellClick($event, row.id, lesson.id)"
+        >
+          @if (cell(row.id, lesson.id).mode === 'present') {
+          <span class="presence-dot" aria-hidden="true"></span>
+          } @if (cell(row.id, lesson.id).mode === 'scored' && cell(row.id, lesson.id).score != null) {
+          <span class="score-num">{{ cell(row.id, lesson.id).score }}</span>
+          }
+        </td>
+        }
+      </tr>
       }
-    </tr>
-    }
-  </tbody>
-</table>
-
-<div class="topic-editor">
-  <label for="topicNote">Приписка по теме</label>
-  <input id="topicNote" [(ngModel)]="topicNote" />
+    </tbody>
+  </table>
 </div>
+
+@if (overlay) {
+<div class="grade-overlay">
+  <div class="grade-overlay-back" (click)="cancelOverlay()"></div>
+  <div class="grade-overlay-panel" (click)="$event.stopPropagation()">
+    <div class="grade-overlay-title">{{ overlay.fullName }}</div>
+    <div class="grade-overlay-actions">
+      <div class="grade-overlay-row">
+        <span class="label">Оценка</span>
+        <div class="score-picks">
+          @for (n of [1, 2, 3, 4, 5]; track n) {
+          <button type="button" class="score-pick" (click)="pickScore(n)">{{ n }}</button>
+          }
+        </div>
+      </div>
+      <button type="button" class="btn-excused" (click)="pickExcused()">Уважительная причина</button>
+      <div class="grade-overlay-footer">
+        <button type="button" class="btn-delete" (click)="deleteCell()">Удалить</button>
+        <button type="button" class="btn-cancel" (click)="cancelOverlay()">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
+}

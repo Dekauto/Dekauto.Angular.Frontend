@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TeacherMockDataService } from '../../services/teacher-mock-data.service';
 import { TeacherStateService } from '../../services/teacher-state.service';
+import { TeacherReportSideNavComponent } from '../teacher-report-side-nav/teacher-report-side-nav.component';
 
 @Component({
   selector: 'app-teacher-report-all-years',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TeacherReportSideNavComponent],
   templateUrl: './teacher-report-all-years.component.html',
   styleUrl: './teacher-report-all-years.component.css'
 })

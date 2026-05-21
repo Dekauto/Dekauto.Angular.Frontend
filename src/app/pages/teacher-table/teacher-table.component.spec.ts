@@ -18,28 +18,26 @@ describe('TeacherTableComponent', () => {
     fixture.detectChanges();
   });
 
-  it('переключает посещаемость в ячейке', () => {
-    // Arrange
+  it('первый клик по пустой ячейке ставит присутствие', () => {
     const rowId = component.data.rows[0].id;
     const lessonId = component.data.lessons[0].id;
-    const initial = component.data.rows[0].attendanceByLesson[lessonId];
+    const ev = new MouseEvent('click');
 
-    // Act
-    component.toggleAttendance(rowId, lessonId);
+    component.onCellClick(ev, rowId, lessonId);
 
-    // Assert
-    expect(component.data.rows[0].attendanceByLesson[lessonId]).toBe(!initial);
+    expect(component.data.rows[0].lessonCells[lessonId].mode).toBe('present');
   });
 
-  it('выставляет балл активности в ячейке', () => {
-    // Arrange
+  it('выставляет оценку через оверлей', () => {
     const rowId = component.data.rows[0].id;
     const lessonId = component.data.lessons[0].id;
+    component.data.rows[0].lessonCells[lessonId] = { mode: 'present' };
+    component.openOverlay(rowId, lessonId, 'Тест');
 
-    // Act
-    component.setActivity(rowId, lessonId, 4);
+    component.pickScore(4);
 
-    // Assert
-    expect(component.data.rows[0].activityByLesson[lessonId]).toBe(4);
+    expect(component.overlay).toBeNull();
+    expect(component.data.rows[0].lessonCells[lessonId].mode).toBe('scored');
+    expect(component.data.rows[0].lessonCells[lessonId].score).toBe(4);
   });
 });

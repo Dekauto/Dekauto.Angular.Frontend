@@ -16,31 +16,52 @@ export interface StudentReportCard {
   recommendedScore: number;
 }
 
-export interface GroupMetric {
+/** Колонка занятия в тепловой карте (несколько пар в один день — разные id). */
+export interface HeatmapSessionColumn {
+  id: string;
+  dateLabel: string;
+  pairType: 'Л' | 'С' | 'П';
+}
+
+/** absent — не был (белая), excused — уважительно (жёлтая), present0 — был (0), score — 1..5 */
+export type HeatmapCellMode = 'absent' | 'excused' | 'present0' | 'score';
+
+export interface HeatmapCell {
+  mode: HeatmapCellMode;
+  score?: number | null;
+}
+
+export interface HeatmapRow {
   fullName: string;
-  totalScore: number;
+  total: string;
+  cells: HeatmapCell[];
+}
+
+export interface GroupHeatmapData {
+  sessions: HeatmapSessionColumn[];
+  rows: HeatmapRow[];
 }
 
 export interface TableLessonColumn {
   id: string;
-  title: string;
+  pairType: 'Л' | 'С' | 'П';
+  dateDayMonth: string;
+}
+
+export type TableLessonCellMode = 'empty' | 'present' | 'excused' | 'scored';
+
+export interface TableLessonCell {
+  mode: TableLessonCellMode;
+  score?: number | null;
 }
 
 export interface TableStudentRow {
   id: string;
   fullName: string;
-  rating: number;
-  exam1: number;
-  exam2: number;
-  lecturesMissed: number;
-  seminarsMissed: number;
-  totalScore: number;
-  attendanceByLesson: Record<string, boolean>;
-  activityByLesson: Record<string, number>;
+  lessonCells: Record<string, TableLessonCell>;
 }
 
 export interface TeacherTableData {
   lessons: TableLessonColumn[];
   rows: TableStudentRow[];
-  topicNote: string;
 }

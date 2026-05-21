@@ -1,6 +1,7 @@
 .legend {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
   margin-bottom: 1rem;
 }
 
@@ -10,19 +11,31 @@
   display: inline-block;
   height: 16px;
   margin-right: 0.3rem;
+  vertical-align: middle;
   width: 16px;
-}
-
-.dot.green {
-  background: #4caf50;
 }
 
 .dot.gray {
   background: #aaa;
 }
 
+.dot.heat {
+  background: linear-gradient(90deg, #cfd8dc, #66bb6a);
+}
+
 .dot.yellow {
-  background: #d8f000;
+  background: #fff59d;
+  border-color: #c4b400;
+}
+
+.dot.white {
+  background: #fff;
+}
+
+.grade-table-scroll {
+  max-height: min(70vh, 720px);
+  overflow: auto;
+  position: relative;
 }
 
 .grade-table {
@@ -35,74 +48,194 @@
   border: 1px solid #cfcfcf;
   padding: 0.35rem;
   text-align: center;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
-.grade-table td:first-child,
-.grade-table th:first-child {
+.col-fio {
+  background: #fafafa;
+  left: 0;
+  min-width: 11rem;
+  position: sticky;
   text-align: left;
+  z-index: 2;
 }
 
-.good {
-  background: #61b86f;
+.grade-table thead .col-fio {
+  z-index: 3;
 }
 
-.cell-actions {
+.col-lesson {
+  font-size: 0.85rem;
+  line-height: 1.2;
+  min-width: 5.5rem;
+  vertical-align: bottom;
+}
+
+.lesson-type {
+  color: #1b5e20;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.lesson-date {
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+
+.lesson-topic {
+  border-top: 1px dashed #bdbdbd;
+  cursor: text;
+  margin-top: 0.35rem;
+  min-height: 1.6rem;
+  padding-top: 0.25rem;
+  text-align: center;
+}
+
+.topic-label {
+  color: #757575;
+  font-size: 0.78rem;
+}
+
+.topic-input {
+  border: 1px solid #5cbf61;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 0.78rem;
+  max-width: 100%;
+  padding: 0.2rem 0.35rem;
+  width: 100%;
+}
+
+.grade-cell {
+  cursor: pointer;
+  min-height: 2.5rem;
+  min-width: 2.75rem;
+  transition: box-shadow 0.12s ease;
+}
+
+.grade-cell:hover {
+  box-shadow: inset 0 0 0 1px #8bc34a;
+}
+
+.cell-empty {
+  background: #fff;
+}
+
+.cell-present {
+  background: #fff;
+}
+
+.cell-excused {
+  background: #fff9c4;
+}
+
+.presence-dot {
+  background: #9e9e9e;
+  border: 1px solid #616161;
+  border-radius: 50%;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+}
+
+.score-num {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.grade-overlay {
   align-items: center;
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  inset: 0;
+  justify-content: center;
+  position: fixed;
+  z-index: 1200;
 }
 
-.attendance-btn {
-  background: transparent;
-  border: 0;
-  cursor: pointer;
+.grade-overlay-back {
+  background: rgba(0, 0, 0, 0.35);
+  inset: 0;
+  position: absolute;
 }
 
-.attendance-btn span {
-  background: #a1a1a1;
-  border: 1px solid #4a4a4a;
-  border-radius: 50%;
+.grade-overlay-panel {
+  background: #fff;
+  border: 1px solid #9e9e9e;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  max-width: 360px;
+  padding: 1.1rem 1.25rem;
+  position: relative;
+  width: calc(100% - 2rem);
+  z-index: 1;
+}
+
+.grade-overlay-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.grade-overlay-row {
+  margin-bottom: 0.85rem;
+}
+
+.grade-overlay-row .label {
   display: block;
-  height: 16px;
-  width: 16px;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
 }
 
-.attendance-btn span.marked {
-  background: #4caf50;
-}
-
-.activity-actions {
+.score-picks {
   display: flex;
-  gap: 0.25rem;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
 }
 
-.score-btn {
+.score-pick {
   background: #5cbf61;
   border: 0;
   border-radius: 50%;
   color: #fff;
   cursor: pointer;
-  height: 22px;
-  width: 22px;
+  font-weight: 600;
+  height: 36px;
+  width: 36px;
 }
 
-.topic-editor {
-  margin-top: 1rem;
-  max-width: 500px;
-}
-
-.topic-editor label {
-  display: block;
-  margin-bottom: 0.4rem;
-  text-align: left;
-}
-
-.topic-editor input {
-  border: 1px solid #5cbf61;
+.btn-excused {
+  background: #fff9c4;
+  border: 1px solid #c4b400;
   border-radius: 8px;
-  font-size: 1.3rem;
-  padding: 0.5rem;
-  width: 100%;
+  cursor: pointer;
+  display: block;
+  font-size: 0.9rem;
+  margin: 0 auto 1rem;
+  padding: 0.45rem 0.75rem;
+}
+
+.grade-overlay-footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.btn-delete,
+.btn-cancel {
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.9rem;
+}
+
+.btn-delete {
+  background: #ffebee;
+  border: 1px solid #e57373;
+}
+
+.btn-cancel {
+  background: #f5f5f5;
+  border: 1px solid #bdbdbd;
 }

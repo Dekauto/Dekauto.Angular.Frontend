@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
   StudentReportCard,
   TeacherFilterState,
@@ -11,15 +11,18 @@ import { TeacherMockDataService } from './teacher-mock-data.service';
   providedIn: 'root'
 })
 export class TeacherStateService {
-  private readonly filtersSubject = new BehaviorSubject<TeacherFilterState>(
-    this.teacherMockDataService.getDefaultFilters()
-  );
-  readonly filters$ = this.filtersSubject.asObservable();
+  private readonly filtersSubject: BehaviorSubject<TeacherFilterState>;
+  readonly filters$: Observable<TeacherFilterState>;
 
   private readonly selectedStudentIdSubject = new BehaviorSubject<string | null>(null);
   readonly selectedStudentId$ = this.selectedStudentIdSubject.asObservable();
 
-  constructor(private teacherMockDataService: TeacherMockDataService) {}
+  constructor(private teacherMockDataService: TeacherMockDataService) {
+    this.filtersSubject = new BehaviorSubject<TeacherFilterState>(
+      this.teacherMockDataService.getDefaultFilters()
+    );
+    this.filters$ = this.filtersSubject.asObservable();
+  }
 
   get filtersValue(): TeacherFilterState {
     return this.filtersSubject.value;

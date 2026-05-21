@@ -1,5 +1,7 @@
 <header class="teacher-header">
-  <div class="brand">Dekauto</div>
+  <a class="brand-link" routerLink="/teacher" title="На главную преподавателя">
+    <img class="brand-logo" src="assets/brand/dekauto-icon.png" width="180" height="48" alt="Dekauto" />
+  </a>
   <button type="button" class="logout-button" (click)="logout()">
     Выход ({{ authService.currentUser?.login || 'teacher' }})
   </button>

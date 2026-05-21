@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
-  GroupMetric,
+  GroupHeatmapData,
+  HeatmapCell,
   StudentReportCard,
+  TableLessonCell,
   TeacherFilterState,
   TeacherTableData
 } from '../domain-models/teacher/teacher.models';
@@ -72,14 +74,71 @@ export class TeacherMockDataService {
     ];
   }
 
-  getGroupMetrics(_: TeacherFilterState): GroupMetric[] {
-    return [
-      { fullName: 'Бречалин Д. М.', totalScore: 8.8 },
-      { fullName: 'Шевелева Д. Р.', totalScore: 8.4 },
-      { fullName: 'Лосева Л. Г.', totalScore: 7.9 },
-      { fullName: 'Фалатова А. А.', totalScore: 7.8 },
-      { fullName: 'Кочанов В. Г.', totalScore: 7.0 }
+  getGroupHeatmap(_: TeacherFilterState): GroupHeatmapData {
+    const sessions = [
+      { id: 's1', dateLabel: '05.02', pairType: 'Л' as const },
+      { id: 's2', dateLabel: '05.02', pairType: 'П' as const },
+      { id: 's3', dateLabel: '12.02', pairType: 'С' as const },
+      { id: 's4', dateLabel: '19.02', pairType: 'Л' as const },
+      { id: 's5', dateLabel: '26.02', pairType: 'П' as const },
+      { id: 's6', dateLabel: '04.03', pairType: 'Л' as const }
     ];
+
+    const mk = (...cells: HeatmapCell[]): HeatmapCell[] => cells;
+
+    return {
+      sessions,
+      rows: [
+        {
+          fullName: 'Бречалин Д. М.',
+          total: '8,8',
+          cells: mk(
+            { mode: 'score', score: 5 },
+            { mode: 'present0' },
+            { mode: 'score', score: 4 },
+            { mode: 'score', score: 5 },
+            { mode: 'excused' },
+            { mode: 'score', score: 5 }
+          )
+        },
+        {
+          fullName: 'Шевелева Д. Р.',
+          total: '8,4',
+          cells: mk(
+            { mode: 'score', score: 4 },
+            { mode: 'score', score: 3 },
+            { mode: 'absent' },
+            { mode: 'score', score: 4 },
+            { mode: 'score', score: 5 },
+            { mode: 'score', score: 4 }
+          )
+        },
+        {
+          fullName: 'Лосева Л. Г.',
+          total: '7,9',
+          cells: mk(
+            { mode: 'score', score: 3 },
+            { mode: 'present0' },
+            { mode: 'score', score: 3 },
+            { mode: 'excused' },
+            { mode: 'score', score: 2 },
+            { mode: 'score', score: 3 }
+          )
+        },
+        {
+          fullName: 'Кочанов В. Г.',
+          total: '7,0',
+          cells: mk(
+            { mode: 'absent' },
+            { mode: 'absent' },
+            { mode: 'present0' },
+            { mode: 'score', score: 2 },
+            { mode: 'score', score: 3 },
+            { mode: 'present0' }
+          )
+        }
+      ]
+    };
   }
 
   getAllYearsMetrics(_: TeacherFilterState): {
@@ -96,10 +155,21 @@ export class TeacherMockDataService {
 
   getTableData(_: TeacherFilterState): TeacherTableData {
     const lessons = [
-      { id: 'l-1', title: 'Домашние сети' },
-      { id: 'l-2', title: 'Офисные сети' },
-      { id: 'l-3', title: 'IP и MAC адреса' }
+      { id: 'l-1', pairType: 'Л' as const, dateDayMonth: '05.02' },
+      { id: 'l-2', pairType: 'С' as const, dateDayMonth: '12.02' },
+      { id: 'l-3', pairType: 'П' as const, dateDayMonth: '19.02' },
+      { id: 'l-4', pairType: 'Л' as const, dateDayMonth: '26.02' }
     ];
+
+    const emptyCell = (): TableLessonCell => ({ mode: 'empty' });
+
+    const cellsFor = (partial: Record<string, TableLessonCell>): Record<string, TableLessonCell> => {
+      const out: Record<string, TableLessonCell> = {};
+      for (const l of lessons) {
+        out[l.id] = partial[l.id] ?? emptyCell();
+      }
+      return out;
+    };
 
     return {
       lessons,
@@ -107,29 +177,24 @@ export class TeacherMockDataService {
         {
           id: 'st-1',
           fullName: 'Сумочкин Иван Сергеев',
-          rating: 0,
-          exam1: 2,
-          exam2: 2,
-          lecturesMissed: 10,
-          seminarsMissed: 44,
-          totalScore: 0,
-          attendanceByLesson: { 'l-1': false, 'l-2': false, 'l-3': false },
-          activityByLesson: { 'l-1': 0, 'l-2': 0, 'l-3': 0 }
+          lessonCells: cellsFor({
+            'l-1': { mode: 'empty' },
+            'l-2': { mode: 'empty' },
+            'l-3': { mode: 'empty' },
+            'l-4': { mode: 'empty' }
+          })
         },
         {
           id: 'st-2',
           fullName: 'Кочанов Владислав Григорьевич',
-          rating: 0,
-          exam1: 2,
-          exam2: 2,
-          lecturesMissed: 8,
-          seminarsMissed: 40,
-          totalScore: 3,
-          attendanceByLesson: { 'l-1': true, 'l-2': false, 'l-3': false },
-          activityByLesson: { 'l-1': 3, 'l-2': 0, 'l-3': 0 }
+          lessonCells: cellsFor({
+            'l-1': { mode: 'present' },
+            'l-2': { mode: 'scored', score: 3 },
+            'l-3': { mode: 'empty' },
+            'l-4': { mode: 'excused' }
+          })
         }
-      ],
-      topicNote: 'Тема: Домашние сети'
+      ]
     };
   }
 }

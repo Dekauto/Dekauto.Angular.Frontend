@@ -2,16 +2,25 @@
   align-items: center;
   background: #d8d8d8;
   border-bottom: 1px solid #bdbdbd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   display: flex;
   justify-content: space-between;
   min-height: 72px;
   padding: 0 1.5rem;
 }
 
-.brand {
-  color: #4caf50;
-  font-size: 2rem;
-  font-weight: 600;
+.brand-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.brand-logo {
+  display: block;
+  height: 48px;
+  width: auto;
+  max-width: min(220px, 40vw);
+  object-fit: contain;
 }
 
 .logout-button {

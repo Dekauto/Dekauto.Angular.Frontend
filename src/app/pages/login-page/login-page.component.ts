@@ -13,7 +13,7 @@ import { ApiUsersService } from '../../api-services/users/api-users.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrentCredentials } from '../../domain-models/Adapters/CurrentCredentials';
 import { AuthService } from '../../services/auth/auth.service';
-import { RoleKeys } from '../../domain-models/Role';
+import { RoleKeys, userMatchesRoleKey } from '../../domain-models/Role';
 
 @Component({
   selector: 'app-login-page',
@@ -94,7 +94,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
       (response: CurrentCredentials) => { // Сюда приходят 2 токена из authService
         console.log("Authenticate() got from AuthenticateAndGetTokenAsync: ", response);
         if (response && response.accessToken) {
-          if (response.user?.roleName?.includes(RoleKeys.TEACHER)) {
+          if (response.user && userMatchesRoleKey(response.user, RoleKeys.TEACHER)) {
             this.loginRedirect = ['/teacher'];
           } else {
             this.loginRedirect = ['/search'];

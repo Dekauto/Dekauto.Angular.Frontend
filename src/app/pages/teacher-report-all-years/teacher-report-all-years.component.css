@@ -1,28 +1,15 @@
 .page {
+  align-items: start;
   display: grid;
   gap: 2rem;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: minmax(260px, 280px) 1fr;
 }
 
-.side-menu {
-  border: 1px solid #9f9f9f;
-  border-radius: 8px;
+.content {
   display: flex;
   flex-direction: column;
-  height: fit-content;
-  overflow: hidden;
-}
-
-.side-menu a {
-  border-bottom: 1px solid #bcbcbc;
-  color: #111;
-  padding: 0.7rem;
-  text-decoration: none;
-}
-
-.side-menu a.active {
-  background: #4caf50;
-  color: #fff;
+  gap: 1rem;
+  min-width: 0;
 }
 
 .kpi-row {
@@ -38,12 +25,16 @@
   text-align: center;
 }
 
+.kpi-row div:last-child {
+  border-right: 0;
+}
+
 .chart-placeholder {
   align-items: center;
   border: 1px solid #77b781;
   display: flex;
   font-size: 2.2rem;
   justify-content: center;
-  margin-top: 1rem;
+  margin-top: 0;
   min-height: 420px;
 }

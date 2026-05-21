@@ -13,10 +13,18 @@ import { TeacherFilterState } from '../../domain-models/teacher/teacher.models';
   styleUrl: './teacher-report-search.component.css'
 })
 export class TeacherReportSearchComponent {
-  readonly years = this.mock.academicYears;
-  readonly semesters = this.mock.semesters;
-  readonly groups = this.mock.groups;
-  readonly subjects = this.mock.subjects;
+  get years() {
+    return this.mock.academicYears;
+  }
+  get semesters() {
+    return this.mock.semesters;
+  }
+  get groups() {
+    return this.mock.groups;
+  }
+  get subjects() {
+    return this.mock.subjects;
+  }
 
   filters: TeacherFilterState;
 

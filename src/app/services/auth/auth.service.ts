@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, map, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { LoginAdapter } from '../../domain-models/Adapters/LoginAdapter';
 import { CurrentCredentials } from '../../domain-models/Adapters/CurrentCredentials';
 import { ApiUsersService } from '../../api-services/users/api-users.service';
 import { User } from '../../domain-models/User';
+import { userMatchesRoleKey } from '../../domain-models/Role';
 import { DataManagerService } from '../data-manager.service';
 import { CachedDataService } from '../cached-data.service';
-import { faro } from '@grafana/faro-web-sdk';
+import {
+  decodeJwtPayload,
+  normalizeAuthCredentials,
+  roleClaimFromJwtPayload
+} from './auth-credentials.util';
 
 @Injectable({
   providedIn: 'root' // Сервис предоставляется на уровне корневого модуля
@@ -27,8 +32,8 @@ export class AuthService {
     try {
       const stored = localStorage.getItem('currentCredentials');
       if (stored) {
-        initialValue = JSON.parse(stored);
-        // Валидация структуры
+        const parsed: unknown = JSON.parse(stored);
+        initialValue = normalizeAuthCredentials(parsed);
         if (!initialValue?.user?.id || !initialValue.accessToken) {
           throw new Error('Установленные данные входа некорректны или их нет');
         }
@@ -55,20 +60,20 @@ export class AuthService {
   // Метод для входа пользователя
   public authenticateAndGetTokenAsync(loginAdapter: LoginAdapter): Observable<any> {
     return this.apiUsersService.AuthenticateAndGetTokenAsync(loginAdapter).pipe(
-      tap((response: CurrentCredentials) => {
-        if (response?.accessToken) {
-          this.storeCredentials(response);
-        }
-      }),
-      catchError(error => {
-        throw error;
+      tap((response: unknown) => {
+        this.storeCredentials(response);
       })
     );
   }
 
-  private storeCredentials(credentials: CurrentCredentials): void {
-    localStorage.setItem('currentCredentials', JSON.stringify(credentials));
-    this.currentCredentials.next(credentials);
+  private storeCredentials(credentials: unknown): void {
+    const normalized = normalizeAuthCredentials(credentials);
+    if (!normalized?.accessToken || !normalized.user?.id) {
+      console.error('Некорректный ответ авторизации', credentials);
+      throw new Error('Некорректный ответ авторизации');
+    }
+    localStorage.setItem('currentCredentials', JSON.stringify(normalized));
+    this.currentCredentials.next(normalized);
   }
 
   //  Метод для выхода пользователя
@@ -110,15 +115,23 @@ export class AuthService {
     }
   }
 
-  getRole(): string {
-    return this.currentUser?.roleName || '';
-  }
-
   userHasRole(role: string): boolean {
-    return this.getRole().includes(role);
+    const user = this.currentUser;
+    if (user && userMatchesRoleKey(user, role)) {
+      return true;
+    }
+    const token = this.getAccessToken();
+    if (!token) {
+      return false;
+    }
+    const jwtRole = roleClaimFromJwtPayload(decodeJwtPayload(token));
+    if (!jwtRole) {
+      return false;
+    }
+    return userMatchesRoleKey({ roleName: '', engRoleName: jwtRole }, role);
   }
 
   userHasAnyRole(roles: string[]): boolean {
-    return roles.some(role => this.userHasRole(role));
+    return roles.some((role) => this.userHasRole(role));
   }
 }

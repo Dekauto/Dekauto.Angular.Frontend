@@ -1,44 +1,94 @@
 .page {
+  align-items: start;
   display: grid;
   gap: 2rem;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: minmax(260px, 280px) 1fr;
 }
 
-.side-menu {
-  border: 1px solid #9f9f9f;
-  border-radius: 8px;
+.content {
   display: flex;
   flex-direction: column;
-  height: fit-content;
-  overflow: hidden;
-}
-
-.side-menu a {
-  border-bottom: 1px solid #bcbcbc;
-  color: #111;
-  padding: 0.7rem;
-  text-decoration: none;
-}
-
-.side-menu a.active {
-  background: #4caf50;
-  color: #fff;
+  gap: 1rem;
+  min-width: 0;
 }
 
 h2 {
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
 }
 
-table {
+.heatmap-scroll {
+  max-width: 100%;
+  overflow: auto;
+}
+
+.heatmap-table {
   border-collapse: collapse;
   margin-bottom: 1rem;
-  width: 100%;
+  min-width: max(100%, 640px);
 }
 
-th,
-td {
+.heatmap-table th,
+.heatmap-table td {
   border: 1px solid #c8c8c8;
-  padding: 0.5rem;
+  padding: 0.45rem 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.col-name {
+  left: 0;
+  position: sticky;
+  text-align: left;
+  z-index: 1;
+}
+
+.heatmap-table thead .col-name,
+.heatmap-table thead .col-total {
+  background: #f4f4f4;
+}
+
+.heatmap-table tbody .col-name {
+  background: #fff;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.04);
+}
+
+.col-session {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.session-date {
+  display: block;
+}
+
+.session-type {
+  color: #2e7d32;
+  display: block;
+  font-size: 0.95rem;
+}
+
+.heat-cell {
+  font-weight: 600;
+  min-width: 2.4rem;
+}
+
+.cell-absent {
+  background: #fff;
+}
+
+.cell-excused {
+  background: #fff9c4;
+}
+
+.cell-present0 {
+  background: #eceff1;
+  color: #37474f;
+}
+
+.cell-score {
+  color: #1b5e20;
 }
 
 .kpi-grid {

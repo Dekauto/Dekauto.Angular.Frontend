@@ -2,36 +2,46 @@
   <div class="grid">
     <div>
       <label>Учебный год</label>
-      <select [(ngModel)]="filters.academicYear" name="academicYear">
-        @for (year of years; track year) {
-        <option [value]="year">{{ year }}</option>
-        }
-      </select>
+      <div class="field-select">
+        <select [(ngModel)]="filters.academicYear" name="academicYear">
+          @for (year of years; track year) {
+          <option [value]="year">{{ year }}</option>
+          }
+        </select>
+      </div>
     </div>
     <div>
       <label>Семестр</label>
-      <select [(ngModel)]="filters.semester" name="semester">
-        @for (semester of semesters; track semester) {
-        <option [value]="semester">{{ semester }}</option>
-        }
-      </select>
+      <div class="field-select">
+        <select [(ngModel)]="filters.semester" name="semester">
+          @for (semester of semesters; track semester) {
+          <option [value]="semester">{{ semester }}</option>
+          }
+        </select>
+      </div>
     </div>
     <div>
       <label>Учебная группа</label>
-      <select [(ngModel)]="filters.group" name="group">
-        @for (group of groups; track group) {
-        <option [value]="group">{{ group }}</option>
+      <div class="field-select">
+        <select [(ngModel)]="filters.group" name="group">
+          @for (group of groups; track group) {
+          <option [value]="group">{{ group }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="subject-row">
+    <label>Название предмета</label>
+    <div class="field-select">
+      <select [(ngModel)]="filters.subject" name="subject">
+        @for (subject of subjects; track subject) {
+        <option [value]="subject">{{ subject }}</option>
         }
       </select>
     </div>
   </div>
-  <div>
-    <label>Название предмета</label>
-    <select [(ngModel)]="filters.subject" name="subject">
-      @for (subject of subjects; track subject) {
-      <option [value]="subject">{{ subject }}</option>
-      }
-    </select>
+  <div class="submit-row">
+    <button class="submit-btn" type="submit">Показать табель успеваемости группы</button>
   </div>
-  <button type="submit">Показать табель успеваемости группы</button>
 </form>

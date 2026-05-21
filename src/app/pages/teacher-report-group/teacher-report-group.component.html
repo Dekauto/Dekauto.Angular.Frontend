@@ -1,28 +1,49 @@
 <div class="page">
-  <aside class="side-menu">
-    <a routerLink="/teacher/reports/students">Отчет по студентам</a>
-    <a class="active" routerLink="/teacher/reports/group">Отчет по группе</a>
-    <a routerLink="/teacher/reports/all-years">Отчет по дисциплине</a>
-  </aside>
+  <app-teacher-report-side-nav />
 
   <section class="content">
     <h2>Тепловая карта успеваемости</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Студент</th>
-          <th>Итог</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (metric of metrics; track metric.fullName) {
-        <tr>
-          <td>{{ metric.fullName }}</td>
-          <td>{{ metric.totalScore }}</td>
-        </tr>
-        }
-      </tbody>
-    </table>
+
+    <div class="heatmap-scroll">
+      <table class="heatmap-table">
+        <thead>
+          <tr>
+            <th class="col-name">ФИО</th>
+            <th class="col-total">Итог</th>
+            @for (session of heatmap.sessions; track trackSession($index, session)) {
+            <th class="col-session">
+              <span class="session-date">{{ session.dateLabel }}</span>
+              <span class="session-type">{{ session.pairType }}</span>
+            </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of heatmap.rows; track trackRow($index, row)) {
+          <tr>
+            <td class="col-name">{{ row.fullName }}</td>
+            <td class="col-total">{{ row.total }}</td>
+            @for (cell of row.cells; track cell) {
+            <td
+              class="heat-cell"
+              [class.cell-absent]="cell.mode === 'absent'"
+              [class.cell-excused]="cell.mode === 'excused'"
+              [class.cell-present0]="cell.mode === 'present0'"
+              [class.cell-score]="cell.mode === 'score'"
+              [ngStyle]="scoreCellStyle(cell, $index)"
+            >
+              @if (cell.mode === 'present0') {
+              <span>0</span>
+              } @if (cell.mode === 'score' && cell.score != null) {
+              <span>{{ cell.score }}</span>
+              }
+            </td>
+            }
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
     <div class="kpi-grid">
       <div>Средний балл группы: <strong>11,5</strong></div>

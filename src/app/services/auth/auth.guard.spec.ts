@@ -75,4 +75,26 @@ describe('authGuard', () => {
     expect(result).toBeFalse();
     expect(routerNavigateSpy).toHaveBeenCalledWith(['/login']);
   });
+
+  it('берёт requiredRoles с родительского маршрута', () => {
+    authServiceMock.isAuthenticated.and.returnValue(true);
+    authServiceMock.userHasAnyRole.and.returnValue(true);
+    const parent: any = { data: { requiredRoles: [RoleKeys.TEACHER] }, parent: null };
+    const route: any = { data: {}, parent };
+
+    const result = executeGuard(route, {} as any);
+
+    expect(result).toBeTrue();
+    expect(authServiceMock.userHasAnyRole).toHaveBeenCalledWith([RoleKeys.TEACHER]);
+  });
+
+  it('разрешает авторизованного при отсутствии requiredRoles', () => {
+    authServiceMock.isAuthenticated.and.returnValue(true);
+    const route: any = { data: {}, parent: null };
+
+    const result = executeGuard(route, {} as any);
+
+    expect(result).toBeTrue();
+    expect(authServiceMock.userHasAnyRole).not.toHaveBeenCalled();
+  });
 });

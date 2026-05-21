@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LokiTransportService } from './loki-transport.service';
+import { LokiTransport } from './loki-transport.service';
 
-describe('LokiTransportService', () => {
-  let service: LokiTransportService;
+describe('LokiTransport', () => {
+  let service: LokiTransport;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(LokiTransportService);
+    service = TestBed.inject(LokiTransport);
   });
 
   it('should be created', () => {

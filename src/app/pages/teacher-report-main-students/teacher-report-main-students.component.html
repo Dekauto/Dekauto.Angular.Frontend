@@ -1,16 +1,12 @@
 <div class="page">
-  <aside class="side-menu">
-    <a class="active" routerLink="/teacher/reports/students">Отчет по студентам</a>
-    <a routerLink="/teacher/reports/group">Отчет по группе</a>
-    <a routerLink="/teacher/reports/all-years">Отчет по дисциплине</a>
-  </aside>
+  <app-teacher-report-side-nav />
 
   <section class="content">
     @for (card of cards; track card.studentId) {
     <div class="student-card">
       <button class="student-title" type="button" (click)="toggleStudent(card.studentId)">
-        {{ card.fullName }}
-        <span>▾</span>
+        <span class="student-title-text">{{ card.fullName }}</span>
+        <span class="student-title-chevron" aria-hidden="true"></span>
       </button>
 
       @if (isOpened(card.studentId)) {
@@ -19,20 +15,23 @@
           <div class="chart-box">Посещаемость: {{ card.attendancePercent }}%</div>
           <div class="chart-box">Оценка: {{ card.groupRelativeScore }} баллов</div>
         </div>
+        <div class="metrics-legend">
+          Цвет метрик: чем насыщеннее зелёный, тем лучше значение (макс. оценка в ведомости — 15).
+        </div>
         <div class="metrics-grid">
-          <div>
+          <div [class]="metricHeatClass(card.attendancePercent, 100)">
             <div class="metric-label">Посещаемость относительно группы</div>
             <div class="metric-value">Выше средней</div>
           </div>
-          <div>
+          <div [class]="metricHeatClassFromScore(card.groupRelativeScore, 5)">
             <div class="metric-label">Оценка относительно группы</div>
             <div class="metric-value">{{ card.groupRelativeScoreLabel }}</div>
           </div>
-          <div>
+          <div [class]="metricHeatClass(card.correlation * 100, 100)">
             <div class="metric-label">Корреляция между посещаемостью и успеваемостью</div>
             <div class="metric-value">+{{ card.correlation }}</div>
           </div>
-          <div>
+          <div [class]="metricHeatClassFromScore(card.recommendedScore, 15)">
             <div class="metric-label">Рекомендуемая оценка для контрольной недели</div>
             <div class="metric-value">{{ card.recommendedScore }}</div>
           </div>

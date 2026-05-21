@@ -17,19 +17,67 @@ label {
   text-align: left;
 }
 
-select,
-button {
+.field-select {
+  position: relative;
+}
+
+.field-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #fff;
   border: 1px solid #6dbc79;
   border-radius: 8px;
+  box-shadow: none;
+  cursor: pointer;
   font-size: 1.7rem;
-  padding: 0.6rem 0.8rem;
+  outline: none;
+  padding: 0.6rem 2.85rem 0.6rem 0.8rem;
   width: 100%;
 }
 
-button {
+.field-select select:hover,
+.field-select select:focus,
+.field-select select:focus-visible {
+  border-color: #58a863;
+  box-shadow: none;
+  outline: none;
+}
+
+.field-select::after {
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 11px solid #2e7d32;
+  content: '';
+  height: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-35%);
+  width: 0;
+}
+
+.subject-row {
+  margin-bottom: 0;
+}
+
+.submit-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.submit-btn {
   background: #4caf50;
+  border: 1px solid #6dbc79;
+  border-radius: 8px;
   color: #fff;
   cursor: pointer;
-  margin: 2rem auto 0;
-  max-width: 460px;
+  display: block;
+  font-size: 1.7rem;
+  margin: 0;
+  max-width: 1200px;
+  padding: 0.6rem 0.8rem;
+  width: 100%;
 }
