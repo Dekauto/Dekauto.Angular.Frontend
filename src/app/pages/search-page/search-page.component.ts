@@ -23,15 +23,15 @@ import { HeaderComponent } from '../header/header.component';
 import { HttpResponse } from '@angular/common/http';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { diploma_supplement_export_default_name } from '../../app.config';
+import { StyleClass } from "primeng/styleclass";
 
-type UploadFileType = 'ld' | 'contract' | 'journal' | 'statement' | 'plan' | 'studentCard';
+type UploadFileType = 'ld' | 'contract' | 'journal' | 'statement' | 'plan' | 'plan2' | 'studentCard';
 
 @Component({
   selector: 'app-search-page',
   imports: [FormsModule, SelectModule, ButtonModule,
     RouterOutlet, RouterModule, FileUploadModule, ToastModule,
-    CommonModule, HeaderComponent, ConfirmPopupModule
-  ],
+    CommonModule, HeaderComponent, ConfirmPopupModule, StyleClass],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.css',
   providers: [MessageService, ConfirmationService]
@@ -252,6 +252,12 @@ export class SearchPageComponent implements OnInit {
       return;
     }
 
+    if (!this.files.plan2) {
+      this.showError(null, "Импорт: Не прикреплен учебный план.", "Пожалуйста, загрузите Excel-файл с учебным планом.");
+      this.importLoading = false;
+      return;
+    }
+
     if (!this.selectedManufacturer) {
       this.showError(null, "Валидация: Не выбран шаблон.", "Пожалуйста, выберите производителя шаблона.");
       this.importLoading = false;
@@ -264,9 +270,13 @@ export class SearchPageComponent implements OnInit {
       return;
     }
 
+    const manufacturer = this.selectedManufacturer;
+    const educationLevel = this.selectedEducationLvl;
+
     // ЭТАП 1: Подготовка файла и импорт
     const importFormData = new FormData();
     importFormData.append('studentCard', this.files.studentCard);
+    importFormData.append('plan', this.files.plan2);
 
     // Вызываем метод сервиса для импорта файла
     this.apiImportService.importFileAsync(importFormData).subscribe({
@@ -281,9 +291,11 @@ export class SearchPageComponent implements OnInit {
         // ЭТАП 2: Подготовка объекта запроса на экспорт
         const exportRequest: DiplomaSupplementExportRequest = {
           data: diplomaSupplementData,
-          manufacturer: this.selectedManufacturer!,
-          educationLevel: this.selectedEducationLvl!
+          manufacturer: manufacturer,
+          educationLevel: educationLevel
         };
+
+        console.log('Экспорт приложения диплома: payload manufacturer/educationLevel', manufacturer, educationLevel);
 
         // Вызываем метод сервиса для экспорта документа
         this.apiExportService.exportDiplomaSupplementAsync(exportRequest).subscribe({
@@ -397,12 +409,32 @@ export class SearchPageComponent implements OnInit {
     }
 
     if (!detail) {
-      if (typeof error.error == 'string') {
-        detail = error.error;
+      const errBody = error?.error;
+      if (typeof errBody === 'string') {
+        detail = errBody;
+      } else if (errBody && typeof errBody === 'object' && errBody['errorType'] === 'StudentImportMismatch') {
+        const apiMessage = errBody['message'];
+        if (typeof apiMessage === 'string' && apiMessage.trim().length > 0) {
+          detail = apiMessage;
+        } else {
+          const fileName = errBody['sourceFileName'] ?? '';
+          const role = errBody['sourceFileRole'] ?? '';
+          const missing: string[] = Array.isArray(errBody['missingStudents']) ? errBody['missingStudents'] : [];
+          const list = missing.length ? missing.join(', ') : '(список пуст)';
+          detail = `Файл: ${fileName}. Роль в наборе: ${role}. Отсутствуют в файле (нужны для согласованного импорта): ${list}.`;
+        }
       } else {
         detail = "Возникла непредвиденная ошибка. Повторите попытку или свяжитесь с администратором";
       }
     }
-    this.messageService.add({ severity: 'error', summary: summary, detail: detail, life: 7000 });
+    const longDetail = typeof detail === 'string' && detail.length > 220;
+    const toastLife = longDetail ? 45000 : 7000;
+    this.messageService.add({
+      severity: 'error',
+      summary: summary,
+      detail: detail,
+      life: toastLife,
+      ...(longDetail ? { styleClass: 'dekauto-toast-import-error' } : {}),
+    });
   }
 }
