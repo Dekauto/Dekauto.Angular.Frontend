@@ -73,5 +73,7 @@ export class TeacherReportSearchComponent implements OnInit {
       next: () => this.router.navigate(['/teacher/reports/students']),
       error: () => this.router.navigate(['/teacher/reports/students'])
     });
+    // Предзагрузка отчёта по группе с актуальными фильтрами (навигация через боковое меню).
+    this.state.loadGroupReport().subscribe();
   }
 }

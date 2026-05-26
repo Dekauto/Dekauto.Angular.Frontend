@@ -24,11 +24,6 @@ export class TeacherTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const cached = this.teacherStateService.getTableData();
-    if (cached.rows.length > 0 || cached.lessons.length > 0) {
-      this.applyTableData(cached);
-      return;
-    }
     this.teacherStateService.loadTableData().subscribe((data) => this.applyTableData(data));
   }
 

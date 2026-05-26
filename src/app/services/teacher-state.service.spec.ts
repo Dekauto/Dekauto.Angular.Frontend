@@ -27,6 +27,13 @@ describe('TeacherStateService', () => {
     expect(service.filtersValue.group).toBe(nextGroup);
   });
 
+  it('сбрасывает кэш отчётов при смене фильтров', () => {
+    service.patchFilters({ group: 'G1', subject: 'Math', semester: '1' });
+    (service as unknown as { groupHeatmap: unknown }).groupHeatmap = { sessions: [], rows: [{}] };
+    service.patchFilters({ group: 'G2' });
+    expect(service.getGroupHeatmap().rows.length).toBe(0);
+  });
+
   it('обновляет выбранного студента', (done) => {
     const expectedId = 'st-2';
     service.setSelectedStudent(expectedId);

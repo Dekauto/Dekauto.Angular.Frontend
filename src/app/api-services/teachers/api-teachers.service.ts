@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { teachers_api_url } from '../../app.config';
@@ -65,6 +65,13 @@ export interface GroupMetricsApi {
   providedIn: 'root'
 })
 export class ApiTeachersService {
+  private readonly noCache = {
+    headers: new HttpHeaders({
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache'
+    })
+  };
+
   constructor(private http: HttpClient) {}
 
   syncTimetable(teacherId: string): Observable<{ importedRows: number }> {
@@ -78,13 +85,14 @@ export class ApiTeachersService {
     const params = semester ? { semester } : undefined;
     return this.http.get<TeacherFilterOptionsApi>(
       `${teachers_api_url}/${encodeURIComponent(teacherId)}/filters`,
-      { params }
+      { params, ...this.noCache }
     );
   }
 
   getExclusions(teacherId: string): Observable<{ studentIds: string[] }> {
     return this.http.get<{ studentIds: string[] }>(
-      `${teachers_api_url}/${encodeURIComponent(teacherId)}/exclusions`
+      `${teachers_api_url}/${encodeURIComponent(teacherId)}/exclusions`,
+      this.noCache
     );
   }
 
@@ -110,7 +118,7 @@ export class ApiTeachersService {
     }
     return this.http.get<GradebookTableApi>(
       `${teachers_api_url}/${encodeURIComponent(teacherId)}/gradebook`,
-      { params }
+      { params, ...this.noCache }
     );
   }
 
@@ -132,7 +140,7 @@ export class ApiTeachersService {
     };
     return this.http.get<StudentMetricsApi[]>(
       `${teachers_api_url}/${encodeURIComponent(teacherId)}/metrics/students`,
-      { params }
+      { params, ...this.noCache }
     );
   }
 
@@ -144,13 +152,14 @@ export class ApiTeachersService {
     };
     return this.http.get<GroupMetricsApi>(
       `${teachers_api_url}/${encodeURIComponent(teacherId)}/metrics/group`,
-      { params }
+      { params, ...this.noCache }
     );
   }
 
   getAllGroupsMetrics(teacherId: string): Observable<GroupMetricsApi[]> {
     return this.http.get<GroupMetricsApi[]>(
-      `${teachers_api_url}/${encodeURIComponent(teacherId)}/metrics/groups`
+      `${teachers_api_url}/${encodeURIComponent(teacherId)}/metrics/groups`,
+      this.noCache
     );
   }
 }

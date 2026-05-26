@@ -75,10 +75,26 @@ export class TeacherStateService {
   }
 
   patchFilters(patch: Partial<TeacherFilterState>): void {
-    this.filtersSubject.next({
-      ...this.filtersValue,
-      ...patch
-    });
+    this.setFilters({ ...this.filtersValue, ...patch });
+  }
+
+  private setFilters(next: TeacherFilterState): void {
+    if (this.filtersCacheKey(this.filtersValue) !== this.filtersCacheKey(next)) {
+      this.clearReportCaches();
+    }
+    this.filtersSubject.next(next);
+  }
+
+  /** Сброс кэша отчётов и табеля при смене фильтров или внешних изменениях данных. */
+  clearReportCaches(): void {
+    this.tableData = null;
+    this.studentCards = [];
+    this.groupHeatmap = null;
+    this.groupMetrics = null;
+  }
+
+  private filtersCacheKey(f: TeacherFilterState): string {
+    return `${f.academicYear}\0${f.semester}\0${f.group}\0${f.subject}`;
   }
 
   subjectsForGroup(group: string): string[] {
@@ -139,7 +155,7 @@ export class TeacherStateService {
           const subject = subjects.includes(this.filtersValue.subject)
             ? this.filtersValue.subject
             : (subjects[0] ?? '');
-          this.filtersSubject.next({
+          this.setFilters({
             academicYear: opts.academicYears.includes(this.filtersValue.academicYear)
               ? this.filtersValue.academicYear
               : (opts.academicYears[0] ?? ''),
@@ -207,6 +223,7 @@ export class TeacherStateService {
     }
     return this.runWithLoading(
       this.apiTeachers.syncTimetable(teacherId).pipe(
+        tap(() => this.clearReportCaches()),
         map(() => undefined),
         catchError(() => of(undefined))
       )

@@ -26,12 +26,6 @@ export class TeacherReportGroupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const cachedHeatmap = this.state.getGroupHeatmap();
-    const cachedMetrics = this.state.getGroupMetrics();
-    if (cachedHeatmap.rows.length > 0) {
-      this.applyReport(cachedHeatmap, cachedMetrics);
-      return;
-    }
     this.state.loadGroupReport().subscribe(({ heatmap, metrics }) => this.applyReport(heatmap, metrics));
   }
 

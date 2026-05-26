@@ -30,11 +30,6 @@ export class TeacherReportMainStudentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const cached = this.state.getStudentCards();
-    if (cached.length) {
-      this.applyCards(cached);
-      return;
-    }
     this.state.loadStudentReportCards().subscribe((cards) => this.applyCards(cards));
   }
 
