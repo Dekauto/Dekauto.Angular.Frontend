@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { StudentReportCard } from '../../domain-models/teacher/teacher.models';
 import { TeacherStateService } from '../../services/teacher-state.service';
+import {
+  formatReportInteger,
+  formatReportNumber,
+  formatReportPercent
+} from '../../utils/teacher-report-format';
 import { TeacherReportSideNavComponent } from '../teacher-report-side-nav/teacher-report-side-nav.component';
 
 @Component({
@@ -14,36 +19,52 @@ import { TeacherReportSideNavComponent } from '../teacher-report-side-nav/teache
 export class TeacherReportMainStudentsComponent implements OnInit {
   cards: StudentReportCard[] = [];
   openedStudentId: string | null = null;
+  readonly loading$;
 
-  constructor(private teacherStateService: TeacherStateService) {}
+  readonly formatNumber = formatReportNumber;
+  readonly formatPercent = formatReportPercent;
+  readonly formatInteger = formatReportInteger;
+
+  constructor(private state: TeacherStateService) {
+    this.loading$ = this.state.loading$;
+  }
 
   ngOnInit(): void {
-    this.cards = this.teacherStateService.getStudentCards();
-    this.openedStudentId = this.cards[0]?.studentId ?? null;
-    this.teacherStateService.setSelectedStudent(this.openedStudentId);
+    const cached = this.state.getStudentCards();
+    if (cached.length) {
+      this.applyCards(cached);
+      return;
+    }
+    this.state.loadStudentReportCards().subscribe((cards) => this.applyCards(cards));
+  }
+
+  private applyCards(cards: StudentReportCard[]): void {
+    this.cards = cards;
+    this.openedStudentId = cards[0]?.studentId ?? null;
+    this.state.setSelectedStudent(this.openedStudentId);
   }
 
   toggleStudent(studentId: string): void {
     this.openedStudentId = this.openedStudentId === studentId ? null : studentId;
-    this.teacherStateService.setSelectedStudent(this.openedStudentId);
+    this.state.setSelectedStudent(this.openedStudentId);
   }
 
   isOpened(studentId: string): boolean {
     return this.openedStudentId === studentId;
   }
 
-  /** Нормализация 0..max → класс heat-0 … heat-4 (зелёнее = лучше) */
-  metricHeatClass(value: number, max: number): string {
-    if (max <= 0 || !Number.isFinite(value)) {
-      return 'metric-cell heat-0';
-    }
-    const t = Math.min(1, Math.max(0, value / max));
-    const step = Math.min(4, Math.floor(t * 5));
-    return `metric-cell heat-${step}`;
+  metricRygStyle(normalized: number): Record<string, string> {
+    const t = Math.min(1, Math.max(0, normalized));
+    const hue = t * 120;
+    return { background: `hsl(${hue}deg 72% 88%)` };
   }
 
-  /** Для шкалы 0..maxScore (например 15 для ведомости) */
-  metricHeatClassFromScore(score: number, maxScore: number): string {
-    return this.metricHeatClass(score, maxScore);
+  deviationStyle(deviation: number): Record<string, string> {
+    return this.metricRygStyle(0.5 + deviation / 2);
+  }
+
+  formatDeviation(deviation: number): string {
+    const sign = deviation > 0 ? '+' : '';
+    return `${sign}${formatReportPercent(deviation * 100)}`;
   }
 }

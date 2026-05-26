@@ -1,6 +1,7 @@
 <div class="page">
   <app-teacher-report-side-nav />
 
+  @if (!(loading$ | async)) {
   <section class="content">
     @for (card of cards; track card.studentId) {
     <div class="student-card">
@@ -11,29 +12,40 @@
 
       @if (isOpened(card.studentId)) {
       <div class="open-content">
-        <div class="chart-row">
-          <div class="chart-box">Посещаемость: {{ card.attendancePercent }}%</div>
-          <div class="chart-box">Оценка: {{ card.groupRelativeScore }} баллов</div>
-        </div>
-        <div class="metrics-legend">
-          Цвет метрик: чем насыщеннее зелёный, тем лучше значение (макс. оценка в ведомости — 15).
-        </div>
-        <div class="metrics-grid">
-          <div [class]="metricHeatClass(card.attendancePercent, 100)">
-            <div class="metric-label">Посещаемость относительно группы</div>
-            <div class="metric-value">Выше средней</div>
+        <div class="metrics-legend">Красный — хуже, жёлтый — среднее, зелёный — лучше.</div>
+
+        <div class="deviation-row">
+          <div class="metric-cell" [ngStyle]="deviationStyle(card.attendanceDeviation)">
+            <div class="metric-label">Коэффициент отклонения посещаемости</div>
+            <div class="metric-value">{{ formatDeviation(card.attendanceDeviation) }}</div>
           </div>
-          <div [class]="metricHeatClassFromScore(card.groupRelativeScore, 5)">
+          <div class="metric-cell" [ngStyle]="deviationStyle(card.scoreDeviation)">
+            <div class="metric-label">Коэффициент отклонения оценки</div>
+            <div class="metric-value">{{ formatDeviation(card.scoreDeviation) }}</div>
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <div class="chart-box" [ngStyle]="metricRygStyle(card.attendancePercent / 100)">
+            Посещаемость: {{ formatPercent(card.attendancePercent) }}
+          </div>
+          <div class="chart-box" [ngStyle]="metricRygStyle((card.groupRelativeScore - 1) / 4)">
+            Оценка работы на занятиях: {{ formatNumber(card.groupRelativeScore) }} баллов
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-cell" [ngStyle]="metricRygStyle(card.attendancePercent / 100)">
+            <div class="metric-label">Посещаемость относительно группы</div>
+            <div class="metric-value">{{ card.groupRelativeAttendanceLabel }}</div>
+          </div>
+          <div class="metric-cell" [ngStyle]="metricRygStyle((card.groupRelativeScore - 1) / 4)">
             <div class="metric-label">Оценка относительно группы</div>
             <div class="metric-value">{{ card.groupRelativeScoreLabel }}</div>
           </div>
-          <div [class]="metricHeatClass(card.correlation * 100, 100)">
-            <div class="metric-label">Корреляция между посещаемостью и успеваемостью</div>
-            <div class="metric-value">+{{ card.correlation }}</div>
-          </div>
-          <div [class]="metricHeatClassFromScore(card.recommendedScore, 15)">
+          <div class="metric-cell metric-full" [ngStyle]="metricRygStyle(card.recommendedScore / 15)">
             <div class="metric-label">Рекомендуемая оценка для контрольной недели</div>
-            <div class="metric-value">{{ card.recommendedScore }}</div>
+            <div class="metric-value">{{ formatInteger(card.recommendedScore) }}</div>
           </div>
         </div>
       </div>
@@ -41,4 +53,5 @@
     </div>
     }
   </section>
+  }
 </div>

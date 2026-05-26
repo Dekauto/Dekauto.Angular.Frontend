@@ -51,6 +51,13 @@
   vertical-align: middle;
 }
 
+.grade-table thead th {
+  background: #f4f4f4;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
 .col-fio {
   background: #fafafa;
   left: 0;
@@ -61,7 +68,51 @@
 }
 
 .grade-table thead .col-fio {
-  z-index: 3;
+  z-index: 6;
+}
+
+.fio-cell {
+  align-items: center;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.fio-text {
+  flex: 1;
+}
+
+.btn-hide {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.75;
+  padding: 0.15rem;
+}
+
+.btn-hide:hover {
+  opacity: 1;
+}
+
+.btn-hide.is-hidden {
+  opacity: 1;
+}
+
+tr.row-excluded td:not(.col-fio) {
+  opacity: 0.55;
+}
+
+tr.row-excluded .fio-text {
+  background: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 4px,
+    rgba(158, 158, 158, 0.35) 4px,
+    rgba(158, 158, 158, 0.35) 8px
+  );
+  color: #757575;
 }
 
 .col-lesson {

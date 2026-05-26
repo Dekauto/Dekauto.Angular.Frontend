@@ -1,36 +1,36 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TeacherStateService } from './teacher-state.service';
-import { TeacherMockDataService } from './teacher-mock-data.service';
+import { ApiTeachersService } from '../api-services/teachers/api-teachers.service';
+import { TeacherIdService } from './teacher-id.service';
 
 describe('TeacherStateService', () => {
   let service: TeacherStateService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [TeacherStateService, TeacherMockDataService]
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        TeacherStateService,
+        ApiTeachersService,
+        TeacherIdService
+      ]
     });
     service = TestBed.inject(TeacherStateService);
   });
 
   it('обновляет фильтры через patchFilters', () => {
-    // Arrange
     const nextGroup = '22ИТ-ПИ(б/о) ПИП-2';
-
-    // Act
     service.patchFilters({ group: nextGroup });
-
-    // Assert
     expect(service.filtersValue.group).toBe(nextGroup);
   });
 
   it('обновляет выбранного студента', (done) => {
-    // Arrange
     const expectedId = 'st-2';
-
-    // Act
     service.setSelectedStudent(expectedId);
     service.selectedStudentId$.subscribe((studentId) => {
-      // Assert
       expect(studentId).toBe(expectedId);
       done();
     });

@@ -78,12 +78,17 @@ export function normalizeAuthCredentials(raw: unknown): CurrentCredentials | nul
     }
   }
 
+  const externalTeacherId =
+    pickStr(userRaw, 'externalTeacherId', 'ExternalTeacherId') ||
+    pickStr(decodeJwtPayload(accessToken) ?? {}, 'external_teacher_id', 'external_teacher_id');
+
   const user: User = {
     id,
     login,
     roleName,
     engRoleName,
-    roleId
+    roleId,
+    externalTeacherId: externalTeacherId || null
   };
 
   const expRaw = r['accessTokenExpiry'] ?? r['AccessTokenExpiry'];

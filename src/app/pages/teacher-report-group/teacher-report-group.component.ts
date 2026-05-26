@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { GroupHeatmapData, HeatmapCell } from '../../domain-models/teacher/teacher.models';
-import { TeacherMockDataService } from '../../services/teacher-mock-data.service';
+import { GroupHeatmapData, GroupReportMetrics, HeatmapCell } from '../../domain-models/teacher/teacher.models';
 import { TeacherStateService } from '../../services/teacher-state.service';
+import { formatReportNumber, formatReportPercent } from '../../utils/teacher-report-format';
 import { TeacherReportSideNavComponent } from '../teacher-report-side-nav/teacher-report-side-nav.component';
 
 @Component({
@@ -13,17 +13,32 @@ import { TeacherReportSideNavComponent } from '../teacher-report-side-nav/teache
   styleUrl: './teacher-report-group.component.css'
 })
 export class TeacherReportGroupComponent implements OnInit {
-  heatmap!: GroupHeatmapData;
+  heatmap: GroupHeatmapData | null = null;
+  metrics: GroupReportMetrics | null = null;
   columnScoreMaxes: number[] = [];
+  readonly loading$;
 
-  constructor(
-    private mock: TeacherMockDataService,
-    private state: TeacherStateService
-  ) {}
+  readonly formatNumber = formatReportNumber;
+  readonly formatPercent = formatReportPercent;
+
+  constructor(private state: TeacherStateService) {
+    this.loading$ = this.state.loading$;
+  }
 
   ngOnInit(): void {
-    this.heatmap = this.mock.getGroupHeatmap(this.state.filtersValue);
-    this.columnScoreMaxes = this.computeColumnScoreMaxes(this.heatmap);
+    const cachedHeatmap = this.state.getGroupHeatmap();
+    const cachedMetrics = this.state.getGroupMetrics();
+    if (cachedHeatmap.rows.length > 0) {
+      this.applyReport(cachedHeatmap, cachedMetrics);
+      return;
+    }
+    this.state.loadGroupReport().subscribe(({ heatmap, metrics }) => this.applyReport(heatmap, metrics));
+  }
+
+  private applyReport(heatmap: GroupHeatmapData, metrics: GroupReportMetrics): void {
+    this.heatmap = heatmap;
+    this.metrics = metrics;
+    this.columnScoreMaxes = this.computeColumnScoreMaxes(heatmap);
   }
 
   private computeColumnScoreMaxes(data: GroupHeatmapData): number[] {
@@ -58,5 +73,4 @@ export class TeacherReportGroupComponent implements OnInit {
   trackRow(_: number, r: { fullName: string }): string {
     return r.fullName;
   }
-
 }

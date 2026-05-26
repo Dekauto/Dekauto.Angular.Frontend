@@ -11,17 +11,29 @@ import { TeacherStateService } from '../../services/teacher-state.service';
   styleUrl: './teacher-table.component.css'
 })
 export class TeacherTableComponent implements OnInit {
-  data!: TeacherTableData;
-  /** Тема занятия по id колонки (локально, без API) */
+  data: TeacherTableData | null = null;
+  readonly loading$;
+
   topicByLessonId: Record<string, string> = {};
   editingTopicLessonId: string | null = null;
 
   overlay: { rowId: string; lessonId: string; fullName: string } | null = null;
 
-  constructor(private teacherStateService: TeacherStateService) {}
+  constructor(private teacherStateService: TeacherStateService) {
+    this.loading$ = this.teacherStateService.loading$;
+  }
 
   ngOnInit(): void {
-    this.data = this.teacherStateService.getTableData();
+    const cached = this.teacherStateService.getTableData();
+    if (cached.rows.length > 0 || cached.lessons.length > 0) {
+      this.applyTableData(cached);
+      return;
+    }
+    this.teacherStateService.loadTableData().subscribe((data) => this.applyTableData(data));
+  }
+
+  private applyTableData(data: TeacherTableData): void {
+    this.data = data;
     for (const lesson of this.data.lessons) {
       if (this.topicByLessonId[lesson.id] === undefined) {
         this.topicByLessonId[lesson.id] = '';
@@ -46,13 +58,18 @@ export class TeacherTableComponent implements OnInit {
   }
 
   cell(rowId: string, lessonId: string): TableLessonCell {
-    const row = this.data.rows.find((r) => r.id === rowId);
+    const row = this.data?.rows.find((r) => r.id === rowId);
     return row?.lessonCells[lessonId] ?? { mode: 'empty' };
   }
 
+  toggleHide(studentId: string, event: Event): void {
+    event.stopPropagation();
+    this.teacherStateService.toggleStudentExclusion(studentId).subscribe();
+  }
+
   onCellClick(event: MouseEvent, rowId: string, lessonId: string): void {
-    const row = this.data.rows.find((r) => r.id === rowId);
-    if (!row) {
+    const row = this.data?.rows.find((r) => r.id === rowId);
+    if (!row || row.isExcluded) {
       return;
     }
     const cell = row.lessonCells[lessonId];
@@ -64,6 +81,7 @@ export class TeacherTableComponent implements OnInit {
     }
     if (cell.mode === 'empty') {
       cell.mode = 'present';
+      this.teacherStateService.saveCell(lessonId, rowId, { mode: 'present' }).subscribe();
       event.stopPropagation();
       return;
     }
@@ -80,7 +98,7 @@ export class TeacherTableComponent implements OnInit {
   }
 
   setCellMode(rowId: string, lessonId: string, mode: TableLessonCell['mode'], score?: number | null): void {
-    const row = this.data.rows.find((r) => r.id === rowId);
+    const row = this.data?.rows.find((r) => r.id === rowId);
     if (!row) {
       return;
     }
@@ -94,6 +112,7 @@ export class TeacherTableComponent implements OnInit {
     } else {
       cell.score = null;
     }
+    this.teacherStateService.saveCell(lessonId, rowId, { ...cell }).subscribe();
     this.cancelOverlay();
   }
 
@@ -120,6 +139,9 @@ export class TeacherTableComponent implements OnInit {
 
   lessonScoreMax(lessonId: string): number {
     let max = 1;
+    if (!this.data) {
+      return max;
+    }
     for (const row of this.data.rows) {
       const c = row.lessonCells[lessonId];
       if (c?.mode === 'scored' && c.score != null) {

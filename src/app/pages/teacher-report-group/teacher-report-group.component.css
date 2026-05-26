@@ -14,9 +14,18 @@
 
 h2 {
   margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.heatmap-table thead th {
+  background: #f4f4f4;
+  position: sticky;
+  top: 0;
+  z-index: 4;
 }
 
 .heatmap-scroll {
+  max-height: min(70vh, 720px);
   max-width: 100%;
   overflow: auto;
 }
@@ -39,12 +48,15 @@ h2 {
   left: 0;
   position: sticky;
   text-align: left;
-  z-index: 1;
+  z-index: 2;
 }
 
-.heatmap-table thead .col-name,
+.heatmap-table thead .col-name {
+  z-index: 6;
+}
+
 .heatmap-table thead .col-total {
-  background: #f4f4f4;
+  z-index: 5;
 }
 
 .heatmap-table tbody .col-name {

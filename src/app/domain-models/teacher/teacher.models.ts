@@ -11,8 +11,10 @@ export interface StudentReportCard {
   attendancePercent: number;
   attendancePairs: number;
   groupRelativeScoreLabel: string;
+  groupRelativeAttendanceLabel: string;
   groupRelativeScore: number;
-  correlation: number;
+  attendanceDeviation: number;
+  scoreDeviation: number;
   recommendedScore: number;
 }
 
@@ -42,6 +44,13 @@ export interface GroupHeatmapData {
   rows: HeatmapRow[];
 }
 
+export interface GroupReportMetrics {
+  averageGpa: number;
+  qualityPercent: number;
+  averageAttendance: number;
+  averageCorrelation: number;
+}
+
 export interface TableLessonColumn {
   id: string;
   pairType: 'Л' | 'С' | 'П';
@@ -58,6 +67,7 @@ export interface TableLessonCell {
 export interface TableStudentRow {
   id: string;
   fullName: string;
+  isExcluded: boolean;
   lessonCells: Record<string, TableLessonCell>;
 }
 

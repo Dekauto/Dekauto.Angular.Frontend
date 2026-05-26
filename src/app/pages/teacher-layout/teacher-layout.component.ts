@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
+import { TeacherLoadingOverlayComponent } from '../teacher-loading-overlay/teacher-loading-overlay.component';
 
 @Component({
   selector: 'app-teacher-layout',
-  imports: [CommonModule, RouterModule, RouterOutlet],
+  imports: [CommonModule, RouterModule, RouterOutlet, TeacherLoadingOverlayComponent],
   templateUrl: './teacher-layout.component.html',
   styleUrl: './teacher-layout.component.css'
 })

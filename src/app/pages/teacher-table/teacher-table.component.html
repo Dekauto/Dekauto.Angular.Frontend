@@ -1,3 +1,4 @@
+@if (!(loading$ | async) && data) {
 <section class="legend">
   <span><i class="dot gray"></i> присутствие (серый кружок)</span>
   <span><i class="dot heat"></i> оценка успеваемости 1–5 (насыщеннее зелёный — выше в колонке)</span>
@@ -38,8 +39,19 @@
     </thead>
     <tbody>
       @for (row of data.rows; track trackRow($index, row)) {
-      <tr>
-        <td class="col-fio">{{ row.fullName }}</td>
+      <tr [class.row-excluded]="row.isExcluded">
+        <td class="col-fio fio-cell">
+          <button
+            type="button"
+            class="btn-hide"
+            [attr.aria-label]="row.isExcluded ? 'Показать студента' : 'Скрыть студента'"
+            [class.is-hidden]="row.isExcluded"
+            (click)="toggleHide(row.id, $event)"
+          >
+            {{ row.isExcluded ? '👁' : '👁‍🗨' }}
+          </button>
+          <span class="fio-text">{{ row.fullName }}</span>
+        </td>
         @for (lesson of data.lessons; track lesson.id) {
         <td
           class="grade-cell"
@@ -85,4 +97,5 @@
     </div>
   </div>
 </div>
+}
 }

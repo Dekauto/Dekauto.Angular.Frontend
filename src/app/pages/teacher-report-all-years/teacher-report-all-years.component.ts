@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TeacherMockDataService } from '../../services/teacher-mock-data.service';
 import { TeacherStateService } from '../../services/teacher-state.service';
+import { formatReportNumber, formatReportPercent } from '../../utils/teacher-report-format';
 import { TeacherReportSideNavComponent } from '../teacher-report-side-nav/teacher-report-side-nav.component';
 
 @Component({
@@ -12,19 +12,20 @@ import { TeacherReportSideNavComponent } from '../teacher-report-side-nav/teache
   styleUrl: './teacher-report-all-years.component.css'
 })
 export class TeacherReportAllYearsComponent implements OnInit {
-  averageScore = 0;
-  qualityPercent = 0;
-  averageAttendance = 0;
+  averageScore = '';
+  qualityPercent = '';
+  averageAttendance = '';
 
-  constructor(
-    private mock: TeacherMockDataService,
-    private state: TeacherStateService
-  ) {}
+  readonly formatNumber = formatReportNumber;
+  readonly formatPercent = formatReportPercent;
+
+  constructor(private state: TeacherStateService) {}
 
   ngOnInit(): void {
-    const metrics = this.mock.getAllYearsMetrics(this.state.filtersValue);
-    this.averageScore = metrics.averageScore;
-    this.qualityPercent = metrics.qualityPercent;
-    this.averageAttendance = metrics.averageAttendance;
+    this.state.loadAllYearsMetrics().subscribe((m) => {
+      this.averageScore = formatReportNumber(m.averageScore);
+      this.qualityPercent = formatReportPercent(m.qualityPercent);
+      this.averageAttendance = formatReportPercent(m.averageAttendance);
+    });
   }
 }

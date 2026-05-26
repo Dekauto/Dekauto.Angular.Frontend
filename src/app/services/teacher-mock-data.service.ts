@@ -37,8 +37,10 @@ export class TeacherMockDataService {
         attendancePercent: 78,
         attendancePairs: 15,
         groupRelativeScoreLabel: 'Средняя',
+        groupRelativeAttendanceLabel: 'Средняя',
         groupRelativeScore: 3.7,
-        correlation: 0.72,
+        attendanceDeviation: 0,
+        scoreDeviation: 0,
         recommendedScore: 13
       },
       {
@@ -47,8 +49,10 @@ export class TeacherMockDataService {
         attendancePercent: 74,
         attendancePairs: 14,
         groupRelativeScoreLabel: 'Выше средней',
+        groupRelativeAttendanceLabel: 'Выше средней',
         groupRelativeScore: 4.2,
-        correlation: 0.67,
+        attendanceDeviation: 0,
+        scoreDeviation: 0,
         recommendedScore: 14
       },
       {
@@ -57,8 +61,10 @@ export class TeacherMockDataService {
         attendancePercent: 63,
         attendancePairs: 12,
         groupRelativeScoreLabel: 'Средняя',
+        groupRelativeAttendanceLabel: 'Ниже средней',
         groupRelativeScore: 3.4,
-        correlation: 0.55,
+        attendanceDeviation: 0,
+        scoreDeviation: 0,
         recommendedScore: 11
       },
       {
@@ -67,8 +73,10 @@ export class TeacherMockDataService {
         attendancePercent: 81,
         attendancePairs: 16,
         groupRelativeScoreLabel: 'Выше средней',
+        groupRelativeAttendanceLabel: 'Выше средней',
         groupRelativeScore: 4.5,
-        correlation: 0.7,
+        attendanceDeviation: 0,
+        scoreDeviation: 0,
         recommendedScore: 14
       }
     ];

@@ -47,3 +47,6 @@ export const diploma_supplement_export_default_name = "Приложение ди
 
 // IMPORT
 export const import_api_url = `${backend_api_url}/import`;
+
+// TEACHERS
+export const teachers_api_url = `${backend_api_url}/teachers`;

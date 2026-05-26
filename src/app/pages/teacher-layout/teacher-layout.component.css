@@ -10,17 +10,20 @@
 }
 
 .brand-link {
-  display: flex;
   align-items: center;
+  background: transparent;
+  display: flex;
+  line-height: 0;
   text-decoration: none;
 }
 
 .brand-logo {
+  background: transparent;
   display: block;
   height: 48px;
-  width: auto;
   max-width: min(220px, 40vw);
   object-fit: contain;
+  width: auto;
 }
 
 .logout-button {

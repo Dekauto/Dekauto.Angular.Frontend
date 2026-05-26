@@ -1,3 +1,4 @@
+@if (!(loading$ | async)) {
 <form class="search-form" (ngSubmit)="submit()">
   <div class="grid">
     <div>
@@ -13,7 +14,7 @@
     <div>
       <label>Семестр</label>
       <div class="field-select">
-        <select [(ngModel)]="filters.semester" name="semester">
+        <select [(ngModel)]="filters.semester" name="semester" (ngModelChange)="onSemesterChange()">
           @for (semester of semesters; track semester) {
           <option [value]="semester">{{ semester }}</option>
           }
@@ -23,7 +24,7 @@
     <div>
       <label>Учебная группа</label>
       <div class="field-select">
-        <select [(ngModel)]="filters.group" name="group">
+        <select [(ngModel)]="filters.group" name="group" (ngModelChange)="onGroupChange()">
           @for (group of groups; track group) {
           <option [value]="group">{{ group }}</option>
           }
@@ -45,3 +46,4 @@
     <button class="submit-btn" type="submit">Показать отчет по группе</button>
   </div>
 </form>
+}
