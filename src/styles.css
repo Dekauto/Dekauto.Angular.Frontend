@@ -107,3 +107,20 @@ p-progressbar {
   word-break: break-word;
   hyphens: auto;
 }
+
+.p-toast-message.dekauto-toast-import-warn {
+  max-width: min(96vw, 52rem);
+}
+
+.p-toast-message.dekauto-toast-import-warn .p-toast-message-content {
+  max-width: 100%;
+}
+
+.p-toast-message.dekauto-toast-import-warn .p-toast-detail {
+  max-height: min(65vh, 28rem);
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  white-space: pre-line;
+}

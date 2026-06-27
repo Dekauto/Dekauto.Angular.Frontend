@@ -12,6 +12,7 @@ import { ApiStudentsService } from '../../api-services/students/api-students.ser
 import { ApiGroupsService } from '../../api-services/groups/api-groups.service';
 import { CachedDataService } from '../../services/cached-data.service';
 import { ApiImportService } from '../../api-services/import/api-import.service';
+import { ImportWarning } from '../../api-services/import/import-files-response.model';
 import { ToastModule } from 'primeng/toast';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
@@ -219,6 +220,18 @@ export class SearchPageComponent implements OnInit {
       next: response => {
         console.log(response);
         this.getAllGroupsWithStudentsAsync();
+
+        const warnings = response?.importWarnings ?? [];
+        if (warnings.length > 0) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Импорт: предупреждения',
+            detail: this.formatImportWarnings(warnings, this.files.statement?.name),
+            life: 45000,
+            styleClass: 'dekauto-toast-import-warn'
+          });
+        }
+
         this.messageService.add(
           {
             severity: 'success', summary: 'Импорт: успех принятия новых данных.',
@@ -280,7 +293,8 @@ export class SearchPageComponent implements OnInit {
 
     // Вызываем метод сервиса для импорта файла
     this.apiImportService.importFileAsync(importFormData).subscribe({
-      next: (diplomaSupplementData: any) => {
+      next: (response) => {
+        const diplomaSupplementData = response?.data ?? response;
 
         this.messageService.add({
           severity: 'info',
@@ -397,6 +411,52 @@ export class SearchPageComponent implements OnInit {
         btn.disabled = false;
       }
     });
+  }
+
+  private formatImportWarnings(warnings: ImportWarning[], fallbackFileName?: string): string {
+    return warnings
+      .map(w => this.formatImportWarning(w, fallbackFileName))
+      .join('\n\n');
+  }
+
+  private formatImportWarning(w: ImportWarning, fallbackFileName?: string): string {
+    const fileName = w.fileName?.trim() || fallbackFileName?.trim();
+    const contextParts: string[] = [];
+
+    if (fileName) {
+      contextParts.push(`Файл ${fileName}`);
+    }
+
+    if (w.studentDisplayName) {
+      contextParts.push(w.studentDisplayName);
+    }
+
+    const locationParts: string[] = [];
+    if (w.sheetName) {
+      locationParts.push(`лист ${w.sheetName}`);
+    }
+    if (w.matchedRows?.length) {
+      locationParts.push(`строки ${w.matchedRows.join(', ')}`);
+    }
+
+    if (locationParts.length > 0) {
+      contextParts.push(locationParts.join(' '));
+    }
+
+    const context = contextParts.join(' - ');
+    const text = w.message
+      ? (context ? `${context}. ${w.message}` : w.message)
+      : context;
+
+    return this.capitalizeSentenceStart(text);
+  }
+
+  private capitalizeSentenceStart(text: string): string {
+    if (!text) {
+      return text;
+    }
+
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
   showError(error: any, summary: string, detail?: string) {
