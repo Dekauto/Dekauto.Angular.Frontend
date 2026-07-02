@@ -51,7 +51,8 @@ export class SearchPageComponent implements OnInit {
   ldFile: any = null; // Файл личного дела
   contractFile: any = null; // Файл журнала регистрации договоров
   journalFile: any = null; // Файл журнала выдачи зачеток
-  files: { [key in UploadFileType]?: File } = {};
+  files: { [key in Exclude<UploadFileType, 'statement'>]?: File } = {};
+  statementFiles: File[] = [];
   uploadApiUrl: string = environment.api.baseUrl + '/import/LD';
 
   tableLoading: boolean = false;
@@ -191,13 +192,39 @@ export class SearchPageComponent implements OnInit {
 
   // TODO: передлать на числовые индексы
   onFileSelect(event: any, type: UploadFileType) {
-    if (event.files && event.files.length > 0) {
-      this.files[type] = event.files[0];
+    if (!event.files || event.files.length === 0) {
+      return;
     }
+
+    if (type === 'statement') {
+      for (const file of event.files as File[]) {
+        if (!this.statementFiles.some(f => f.name === file.name && f.size === file.size)) {
+          this.statementFiles.push(file);
+        }
+      }
+      return;
+    }
+
+    this.files[type] = event.files[0];
+  }
+
+  onRemoveStatementFile(event: { file: File }) {
+    const removed = event.file;
+    this.statementFiles = this.statementFiles.filter(
+      f => !(f.name === removed.name && f.size === removed.size)
+    );
   }
 
   onClearFile(type: UploadFileType) {
+    if (type === 'statement') {
+      this.statementFiles = [];
+      return;
+    }
     this.files[type] = undefined;
+  }
+
+  getStatementFileNamesLabel(): string {
+    return this.statementFiles.map(f => f.name).join(', ');
   }
 
   uploadAllForCard() {
@@ -205,7 +232,7 @@ export class SearchPageComponent implements OnInit {
 
     const formData = new FormData();
 
-    if (!this.files.ld || !this.files.contract || !this.files.journal || !this.files.statement || !this.files.plan) {
+    if (!this.files.ld || !this.files.contract || !this.files.journal || this.statementFiles.length === 0 || !this.files.plan) {
       this.showError(null, "Импорт: Не все файлы загружены.", "Пожалуйста, загрузите все требуемые файлы.");
       this.importLoading = false;
       return;
@@ -213,7 +240,9 @@ export class SearchPageComponent implements OnInit {
     if (this.files.ld) formData.append('ld', this.files.ld);
     if (this.files.contract) formData.append('contract', this.files.contract);
     if (this.files.journal) formData.append('journal', this.files.journal);
-    if (this.files.statement) formData.append('statement', this.files.statement);
+    for (const statementFile of this.statementFiles) {
+      formData.append('statements', statementFile);
+    }
     if (this.files.plan) formData.append('plan', this.files.plan);
 
     this.apiImportService.importFileAsync(formData).subscribe({
@@ -226,7 +255,7 @@ export class SearchPageComponent implements OnInit {
           this.messageService.add({
             severity: 'warn',
             summary: 'Импорт: предупреждения',
-            detail: this.formatImportWarnings(warnings, this.files.statement?.name),
+            detail: this.formatImportWarnings(warnings, this.getStatementFileNamesLabel()),
             life: 45000,
             styleClass: 'dekauto-toast-import-warn'
           });

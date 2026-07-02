@@ -327,14 +327,15 @@
           chooseIcon="pi pi-upload"
           [accept]="excelFileFormat"
           maxFileSize="20971520"
+          [multiple]="true"
           [cancelLabel]="cancelLabel"
           (onSelect)="onFileSelect($event, 'statement')"
-          (onRemove)="onClearFile('statement')"
+          (onRemove)="onRemoveStatementFile($event)"
           (onClear)="onClearFile('statement')"
           showUploadButton="false"
         >
           <ng-template #empty>
-            <span class="drag-hint">Перетащите ведомость сюда.</span>
+            <span class="drag-hint">Перетащите одну или несколько ведомостей сюда.</span>
           </ng-template>
         </p-fileupload>
         <p-fileupload
@@ -364,7 +365,7 @@
           !files.ld ||
           !files.contract ||
           !files.journal ||
-          !files.statement ||
+          statementFiles.length === 0 ||
           !files.plan
         "
         (click)="uploadAllForCard()"
